@@ -1,43 +1,63 @@
-# prepare_bins.py
+# prepare_bins.py (Đã sửa hoàn chỉnh)
 import os
 import random
 import numpy as np
 from sklearn.cluster import KMeans
 from PIL import Image
 import cv2
-from pathlib import Path
+from pathlib import Path  # Đảm bảo đã import Path
 from config import COLOR_DIR, BINS_PATH
 
 def sample_ab_pixels(color_dir, max_samples=200000, img_size=128):
-    files = []
-    for root, dirs, fnames in os.walk(color_dir):
-        for f in fnames:
-            if f.lower().endswith(('.jpg','.png','.jpeg')):
-                files.append(os.path.join(root,f))
+    color_path = Path(color_dir) # Chuyển sang Path object
+    exts = ('.jpg','.jpeg','.png')
+    # SỬA Ở ĐÂY: Dùng Path.rglob thay vì os.walk
+    files = [p for p in color_path.rglob('*') if p.suffix.lower() in exts]
+
+    if not files: # Kiểm tra nếu danh sách files rỗng
+        raise RuntimeError('No images found under ' + str(color_dir))
+
     random.shuffle(files)
     samples = []
-    per_image = max(5, max_samples // max(1, len(files)))
+    # Tính toán số lượng mẫu mỗi ảnh cẩn thận hơn
+    num_files = len(files)
+    per_image = max(5, max_samples // max(1, num_files)) if num_files > 0 else 5
+
     total = 0
-    for f in files:
+    print(f"Sampling up to {per_image} pixels from {num_files} images...") # Thêm log
+
+    for f_path in files: # Duyệt qua Path objects
         try:
-            im = Image.open(f).convert('RGB')
+            im = Image.open(f_path).convert('RGB')
             im = im.resize((img_size,img_size), Image.BICUBIC)
             arr = np.array(im)
             lab = cv2.cvtColor(arr, cv2.COLOR_RGB2LAB).astype(np.float32)
             ab = lab[:,:,1:3].reshape(-1,2)
-            if per_image < ab.shape[0]:
-                idx = np.random.choice(ab.shape[0], per_image, replace=False)
-                ab = ab[idx]
-            samples.append(ab)
-            total += ab.shape[0]
+
+            # Lấy mẫu cẩn thận hơn
+            num_pixels = ab.shape[0]
+            samples_to_take = min(per_image, num_pixels) # Lấy tối đa số pixel có
+
+            if samples_to_take < num_pixels:
+                idx = np.random.choice(num_pixels, samples_to_take, replace=False)
+                ab_sampled = ab[idx]
+            else:
+                ab_sampled = ab
+
+            samples.append(ab_sampled)
+            total += ab_sampled.shape[0]
             if total >= max_samples:
+                print(f"Reached max_samples ({total}). Stopping sampling.") # Thêm log
                 break
         except Exception as e:
-            print('skip', f, e)
+            print('skip', str(f_path), e) # Dùng str(f_path)
+
     if len(samples) == 0:
-        raise RuntimeError('No images found under ' + str(color_dir))
+        # Lỗi này không nên xảy ra nếu kiểm tra files ở trên thành công
+        raise RuntimeError('Could not process any images under ' + str(color_dir))
+
     samples = np.vstack(samples)
-    print('Collected samples', samples.shape)
+    print('Collected samples shape:', samples.shape)
     return samples
 
 def build_kmeans(n_clusters=313, out_path=BINS_PATH):
