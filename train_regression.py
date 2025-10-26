@@ -23,7 +23,7 @@ from datasets import ColorizationDataset
 from models.unet import DoubleConv
 
 from utils import lab_to_rgb_batch
-
+from config import COLOR_DIR
 # -------------------------
 # UNet regression (2-channel output)
 # -------------------------
@@ -177,7 +177,7 @@ def eval_on_split(checkpoint, split_file='splits/test.txt', out_csv='regression_
 
         # load GT resized (ensure same resize logic as dataset)
         rel_path = rel if isinstance(rel, str) else rel[0]
-        gt_path = os.path.join(str(Path('.').resolve() / 'data' / 'color'), rel_path)
+        gt_path = os.path.join(str(COLOR_DIR), rel_path)
         gt_im = Image.open(gt_path).convert('RGB').resize((IMG_SIZE, IMG_SIZE), Image.BICUBIC)
         gt_np = np.array(gt_im).astype(np.float32) / 255.0
 
