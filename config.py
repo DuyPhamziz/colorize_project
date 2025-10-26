@@ -10,7 +10,7 @@ ROOT = Path('.').resolve()
 # 2. ĐỊNH NGHĨA ĐƯỜNG DẪN DATASET 
 KAGGLE_DATASET_NAME = 'my-colorization-data' 
 DATASET_ROOT = Path('/kaggle/input') / KAGGLE_DATASET_NAME
-DATA_DIR = DATASET_ROOT / 'data' 
+DATA_DIR = DATASET_ROOT
 
 GRAY_DIR = DATA_DIR / 'gray'
 COLOR_DIR = DATA_DIR / 'color'
