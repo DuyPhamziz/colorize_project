@@ -1,16 +1,16 @@
-# config.py (Đã sửa và sắp xếp lại để khắc phục NameError)
+# config.py (Đã Sắp xếp lại)
 from pathlib import Path
 import torch
 
 # ************************************************
-# 1. KHẮC PHỤC LỖI NAMERROR BẰNG CÁCH ĐỊNH NGHĨA ROOT Ở ĐẦU
+# ĐỊNH NGHĨA ROOT PHẢI Ở ĐẦU
 ROOT = Path('.').resolve()
 # ************************************************
 
-# 2. ĐỊNH NGHĨA ĐƯỜNG DẪN DATASET (Đã sửa cho Kaggle Input)
+# 2. ĐỊNH NGHĨA ĐƯỜNG DẪN DATASET 
 KAGGLE_DATASET_NAME = 'my-colorization-data' 
 DATASET_ROOT = Path('/kaggle/input') / KAGGLE_DATASET_NAME
-DATA_DIR = DATASET_ROOT / 'data' # <--- Đường dẫn chính xác đến thư mục ảnh
+DATA_DIR = DATASET_ROOT / 'data' 
 
 GRAY_DIR = DATA_DIR / 'gray'
 COLOR_DIR = DATA_DIR / 'color'
