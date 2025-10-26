@@ -1,19 +1,16 @@
-# config.py (Đã Sắp xếp lại)
+# config.py (Sửa lại đường dẫn, thêm /Dataset)
 from pathlib import Path
 import torch
 
-# ************************************************
-# ĐỊNH NGHĨA ROOT PHẢI Ở ĐẦU
 ROOT = Path('.').resolve()
-# ************************************************
 
-# 2. ĐỊNH NGHĨA ĐƯỜNG DẪN DATASET 
-KAGGLE_DATASET_NAME = 'my-colorization-data' 
+KAGGLE_DATASET_NAME = 'my-colorization-data'
 DATASET_ROOT = Path('/kaggle/input') / KAGGLE_DATASET_NAME
-DATA_DIR = DATASET_ROOT
+# THÊM '/Dataset' vào đây:
+DATA_DIR = DATASET_ROOT / 'Dataset' 
 
-GRAY_DIR = DATA_DIR / 'gray'
-COLOR_DIR = DATA_DIR / 'color'
+GRAY_DIR = DATA_DIR / 'gray'    # Sẽ là /kaggle/input/my-colorization-data/Dataset/gray/
+COLOR_DIR = DATA_DIR / 'color'   # Sẽ là /kaggle/input/my-colorization-data/Dataset/color/
 CHECKPOINT_DIR = ROOT / 'checkpoints'
 CHECKPOINT_DIR.mkdir(exist_ok=True)
 
