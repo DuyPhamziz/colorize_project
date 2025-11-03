@@ -1,0 +1,4 @@
+Metric,Mean
+PSNR,23.9816
+SSIM,0.9080
+MSE,0.005663
